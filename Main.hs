@@ -1,5 +1,6 @@
 module Main where
 
+import Data.List.Split
 import Data.HashSet
 import Text.Read
 import Data.Maybe
@@ -25,17 +26,24 @@ getInputs n acc = do
                     input <- readline ""
                     getInputs (n - 1) (acc ++ [input])
 
+ms2i :: Maybe String -> Integer
+ms2i Nothing  = 0
+ms2i (Just s) = read s
+
+getPosition :: Maybe String -> Maybe (Integer, Integer)
+getPosition Nothing  = Nothing
+getPosition (Just s) = let fst:snd:[] in splitOn " " s
+                       Just ((read fst) (read snd))
+
 main :: IO ()
 main = do
           maybeNumberOfCommands <- readline ""
-          position <- readline ""
-
-          let numberOfCommands = fromMaybe 0 $ maybeNumberOfCommands >>= readMaybe
-          commands <- getInputs numberOfCommands []
+          maybePosition         <- readline ""
+          maybeCommands         <- getInputs (ms2i maybeNumberOfCommands) []
           
-          case position of
-            Nothing -> return ()
+          case maybePosition of
+            Nothing     -> return ()
             Just "quit" -> return ()
-            Just input -> do 
-                            putStrLn $ "Input was: " ++ input
-                            main
+            Just input  -> do 
+                             putStrLn $ "Input was: " ++ input
+                             main
