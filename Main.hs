@@ -23,7 +23,7 @@ data Robot = Robot
 getInputs :: Integer -> [Maybe String] -> IO [Maybe String]
 getInputs 0 acc = return acc
 getInputs n acc = do
-                    input <- readline ""
+                    input <- readline "Command: "
                     getInputs (n - 1) (acc ++ [input])
 
 ms2i :: Maybe String -> Integer
@@ -45,7 +45,7 @@ parseDirection _        = Nothing
 parseCommand :: String -> Maybe Command
 parseCommand s = case direction of
                    Nothing -> Nothing
-                   Just d  -> Just Command {direction = d, steps = steps}
+                   Just d  -> Just Command { direction = d, steps = steps }
                  where fst:snd:[] = splitOn " " s
                        direction  = parseDirection fst
                        steps      = read snd 
@@ -58,9 +58,18 @@ parseCommands (c:cs) acc = case c of
 
 main :: IO ()
 main = do
-          maybeNumberOfCommands <- readline ""
-          maybePosition         <- readline ""
+          maybeNumberOfCommands <- readline "Number of commands: "
+          maybePosition         <- readline "Initial position: "
           maybeCommands         <- getInputs (ms2i maybeNumberOfCommands) []
+
+          let position = parsePosition maybePosition
+          let commands = parseCommands maybeCommands []
+
+          case (position, commands) of
+            (Nothing, Nothing)             -> main
+            (_, Nothing)                   -> main
+            (Nothing, _)                   -> main
+            (Just position, Just commands) -> main
           
           case maybePosition of
             Nothing     -> return ()
