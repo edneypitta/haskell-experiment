@@ -32,8 +32,8 @@ ms2i (Just s) = read s
 
 getPosition :: Maybe String -> Maybe (Integer, Integer)
 getPosition Nothing  = Nothing
-getPosition (Just s) = let fst:snd:[] in splitOn " " s
-                       Just ((read fst) (read snd))
+getPosition (Just s) = Just (read fst, read snd)
+                       where fst:snd:[] = splitOn " " s
 
 main :: IO ()
 main = do
