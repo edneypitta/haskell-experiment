@@ -56,6 +56,9 @@ parseCommands (c:cs) acc = case c of
                             Nothing -> parseCommands cs acc
                             Just s  -> parseCommands cs (acc ++ [parseCommand s])
 
+clean :: Robot -> Integer
+clean (Robot p c) = 3
+
 main :: IO ()
 main = do
           maybeNumberOfCommands <- readline "Number of commands: "
@@ -69,11 +72,8 @@ main = do
             (Nothing, Nothing)             -> main
             (_, Nothing)                   -> main
             (Nothing, _)                   -> main
-            (Just position, Just commands) -> main
-          
-          case maybePosition of
-            Nothing     -> return ()
-            Just "quit" -> return ()
-            Just input  -> do 
-                             putStrLn $ "Input was: " ++ input
-                             main
+            (Just position, Just commands) -> do
+                                                let robot = Robot { position = position, commands = commands }
+                                                let cleaned = clean robot
+                                                putStrLn $ "Cleaned: " ++ show cleaned
+                                                main
