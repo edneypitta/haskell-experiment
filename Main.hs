@@ -64,11 +64,8 @@ main = do
           let commands = parseCommands maybeCommands
 
           case (position, commands) of
-            (Nothing, Nothing)             -> main
-            (_, Nothing)                   -> main
-            (Nothing, _)                   -> main
             (Just position, Just commands) -> do
                                                 let robot = Robot { position = position, commands = commands }
                                                 let cleaned = clean robot
                                                 putStrLn $ "Cleaned: " ++ show cleaned
-                                                main
+          main
