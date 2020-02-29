@@ -21,7 +21,7 @@ data Robot = Robot
   } deriving (Eq, Show, Read)
 
 getInputs :: Int -> IO [Maybe String]
-getInputs n = sequence $ take n $ map (\_ -> do readline "Command: ") [1..]
+getInputs n = sequence $ take n $ map (\_ -> readline "Command: ") [1..]
 
 ms2i :: Maybe String -> Int
 ms2i Nothing  = 0
