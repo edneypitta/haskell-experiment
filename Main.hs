@@ -1,7 +1,7 @@
 module Main where
 
 import Data.List.Split
-import Data.HashSet
+--import Data.HashSet
 import Text.Read
 import Data.Maybe
 import System.Console.Readline
@@ -20,13 +20,10 @@ data Robot = Robot
   , commands :: [Command] 
   } deriving (Eq, Show, Read)
 
-getInputs :: Integer -> [Maybe String] -> IO [Maybe String]
-getInputs 0 acc = return acc
-getInputs n acc = do
-                    input <- readline "Command: "
-                    getInputs (n - 1) (acc ++ [input])
+getInputs :: Int -> IO [Maybe String]
+getInputs n = sequence $ take n $ map (\_ -> do readline "Command: ") [1..]
 
-ms2i :: Maybe String -> Integer
+ms2i :: Maybe String -> Int
 ms2i Nothing  = 0
 ms2i (Just s) = read s
 
@@ -50,23 +47,21 @@ parseCommand s = case direction of
                        direction  = parseDirection fst
                        steps      = read snd 
 
-parseCommands :: [Maybe String] -> [Maybe Command] -> Maybe [Command]
-parseCommands [] acc     = sequence acc
-parseCommands (c:cs) acc = case c of
-                            Nothing -> parseCommands cs acc
-                            Just s  -> parseCommands cs (acc ++ [parseCommand s])
+parseCommands :: [Maybe String] -> Maybe [Command]
+parseCommands cs = sequence $ foldr (\s acc -> (s >>= parseCommand) : acc) [] cs
 
 clean :: Robot -> Integer
 clean (Robot p c) = 3
 
 main :: IO ()
 main = do
+          putStrLn "Starting cleaning"
           maybeNumberOfCommands <- readline "Number of commands: "
           maybePosition         <- readline "Initial position: "
-          maybeCommands         <- getInputs (ms2i maybeNumberOfCommands) []
+          maybeCommands         <- getInputs $ ms2i maybeNumberOfCommands
 
           let position = parsePosition maybePosition
-          let commands = parseCommands maybeCommands []
+          let commands = parseCommands maybeCommands
 
           case (position, commands) of
             (Nothing, Nothing)             -> main
